@@ -20,12 +20,17 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'oea4*xuqcamhx*ucym1&=bgeul02eg)74dpc54vwi@*_f==7b='
+#SECRET_KEY = 'oea4*xuqcamhx*ucym1&=bgeul02eg)74dpc54vwi@*_f==7b='
+SECRET_KEY = os.environ['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ['DEBUG'] == 'True'  # environment vars are strings. "convert" to boolean. lol, Python
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [   
+    # TODO: add your Google Cloud Project-ID here
+        'hj-sample-django-app-deploy.appspot.com', # must add the app engine (project-id) domain here
+        '127.0.0.1', # for local testing
+]
 
 
 # Application definition
@@ -77,7 +82,7 @@ WSGI_APPLICATION = 'portfolio.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.0/ref/settings/#databases
 
-DATABASES = {
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'portfolio',
@@ -85,6 +90,16 @@ DATABASES = {
         'PASSWORD': 'postgres',
         'HOST': 'localhost',
         'PORT': '',
+    }
+}"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'HOST': os.environ['DB_HOST'],
+        'PORT': os.environ['DB_PORT'],
+        'NAME': os.environ['DB_NAME'],
+        'USER': os.environ['DB_USER'],
+        'PASSWORD': os.environ['DB_PASSWORD']
     }
 }
 
@@ -125,7 +140,12 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
-STATIC_URL = '/static/'
+#STATIC_URL = '/static/'
+STATIC_URL = os.environ['STATIC_URL']
+
+# collectstatic directory (located OUTSIDE the base directory)
+# TODO: configure the name and path to your static bucket directory (where collectstatic will copy to)
+STATIC_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'scrumboard-app-static')
 
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
